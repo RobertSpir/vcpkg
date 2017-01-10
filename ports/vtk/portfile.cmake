@@ -15,15 +15,10 @@ vcpkg_download_distfile(ARCHIVE
 )
 vcpkg_extract_source_archive(${ARCHIVE})
 
-if (VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
-    set(BUILD_SHARED ON)
-else()
-    set(BUILD_SHARED OFF)
-endif()
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
-    OPTIONS -DBUILD_TESTING=OFF -DCMAKE_CXX_MP_FLAG=ON -DBUILD_SHARED_LIBS=${BUILD_SHARED}
+    OPTIONS -DBUILD_TESTING=OFF -DCMAKE_CXX_MP_FLAG=ON
     # OPTIONS_RELEASE -DOPTIMIZE=1
     # OPTIONS_DEBUG -DDEBUGGABLE=1
 )
@@ -49,3 +44,8 @@ file(RENAME ${CURRENT_PACKAGES_DIR}/share/vtk/Copyright.txt ${CURRENT_PACKAGES_D
 file(RENAME ${CURRENT_PACKAGES_DIR}/lib/cmake/vtk-7.1 ${CURRENT_PACKAGES_DIR}/share/vtk/vtk-7.1)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/lib/cmake)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/lib/cmake)
+#remove bin folders on static build
+if(VCPKG_LIBRARY_LINKAGE STREQUAL static)
+    file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/bin ${CURRENT_PACKAGES_DIR}/debug/bin)
+endif()
+
